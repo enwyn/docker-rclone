@@ -1,4 +1,4 @@
-FROM quay.io/justcontainers/base-alpine:v0.12.2
+FROM archlinux:latest
 MAINTAINER tynor88 <tynor@hotmail.com>
 
 # s6 environment settings
@@ -9,33 +9,18 @@ ENV S6_KEEP_ENV=1
 ENV RCLONE_VERSION="current"
 ENV RCLONE_ARCH="amd64"
 
+Run
+# enable community packages
+ echo "[Community]" >> /etc/pacman.conf
+ echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+
 # install packages
 RUN \
- apk update && \
- apk add --no-cache \
- ca-certificates
-
-# install build packages
-RUN \
- apk add --no-cache --virtual=build-dependencies \
- wget \
- unzip && \
- 
- cd tmp && \
- wget -q http://downloads.rclone.org/rclone-${RCLONE_VERSION}-linux-${RCLONE_ARCH}.zip && \
- unzip /tmp/rclone-${RCLONE_VERSION}-linux-${RCLONE_ARCH}.zip && \
- mv /tmp/rclone-*-linux-${RCLONE_ARCH}/rclone /usr/bin && \
- 
- apk add --no-cache --repository http://nl.alpinelinux.org/alpine/edge/community \
-	shadow && \
- 
-# cleanup
- apk del --purge \
-	build-dependencies && \
- rm -rf \
-	/tmp/* \
-	/var/tmp/* \
-	/var/cache/apk/*
+ pacman -Sy --noconfirm archlinux-keyring && \
+ pacman -Syu --noconfirm ca-certificates rclone && \
+ pacman-db-upgrade && \
+ update-ca-trust && \
+ pacman -Scc --noconfirm
 
 # create abc user
 RUN \
