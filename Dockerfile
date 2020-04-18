@@ -9,10 +9,10 @@ ENV S6_KEEP_ENV=1
 ENV RCLONE_VERSION="current"
 ENV RCLONE_ARCH="amd64"
 
-Run
+RUN
 # enable community packages
- echo "[Community]" >> /etc/pacman.conf
- echo "Include = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+ echo [Community] >> /etc/pacman.conf
+ echo Include = /etc/pacman.d/mirrorlist >> /etc/pacman.conf
 
 # install packages
 RUN \
